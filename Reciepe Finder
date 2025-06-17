@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recipe Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+
+    #recipes {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .recipe {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .recipe img {
+      max-width: 100%;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Recipe Finder</h1>
+    <form id="search-form">
+      <input type="text" id="ingredients" placeholder="Enter ingredients (e.g., chicken, rice)" required />
+      <button type="submit">Search</button>
+    </form>
+    <div id="recipes"></div>
+  </div>
+  <script>
+    const form = document.getElementById('search-form');
+    const recipesContainer = document.getElementById('recipes');
+
+    const API_KEY = 'd69124a42e0b4122badc0ce841ac89d5'; // Replace this!
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const ingredients = document.getElementById('ingredients').value.trim().replace(/\s+/g, '');
+      const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&number=5&apiKey=${API_KEY}`;
+
+      recipesContainer.innerHTML = '<p>Loading...</p>';
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        displayRecipes(data);
+      } catch (err) {
+        recipesContainer.innerHTML = '<p>Error fetching recipes. Try again later.</p>';
+        console.error(err);
+      }
+    });
+
+    function displayRecipes(recipes) {
+      recipesContainer.innerHTML = '';
+      if (recipes.length === 0) {
+        recipesContainer.innerHTML = '<p>No recipes found.</p>';
+        return;
+      }
+
+      recipes.forEach(recipe => {
+        const recipeHTML = `
+          <div class="recipe">
+            <h3>${recipe.title}</h3>
+            <img src="${recipe.image}" alt="${recipe.title}" />
+            <a href="https://spoonacular.com/recipes/${recipe.title
+              .toLowerCase()
+              .replace(/ /g, '-')}-${recipe.id}" target="_blank">View Recipe</a>
+          </div>
+        `;
+        recipesContainer.innerHTML += recipeHTML;
+      });
+    }
+  </script>
+</body>
+</html>
