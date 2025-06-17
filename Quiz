@@ -1,0 +1,136 @@
+
+<html lang="en">
+<head>
+  
+  <title>Simple Quiz App</title>
+  <style>
+    body {
+    font-family: Arial, sans-serif;
+    background: bisque;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .quiz-container {
+    background:cyan;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+  
+  }
+  
+  #answers button {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #answers button.selected {
+    background: red;
+  }
+  
+  #next-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color:yellow;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1><u>Simple Quiz</u></h1>
+    <div id="question">Loading...</div>
+    <div id="answers"></div>
+    <button id="next-btn" disabled>Next</button>
+    <div id="result" class="hidden"></div>
+  </div>
+
+  <script>
+    const questions = [
+    {
+      question: "What is 2 + 2?",
+      answers: ["3", "4", "5", "6"],
+      correct: "4"
+    },
+    {
+      question: "Which language is used to style web pages?",
+      answers: ["HTML", "JQuery", "CSS", "XML"],
+      correct: "CSS"
+    },
+    {
+      question: "What is the capital of France?",
+      answers: ["Berlin", "Madrid", "Paris", "Rome"],
+      correct: "Paris"
+    },
+    {
+        question:"what is the leading party in ap?",
+        answers:["tdp","ycp","jsp","bjp"],
+        correct:"tdp"
+    },
+    
+  ];
+  
+  let currentQuestionIndex = 0;
+  let score = 0;
+  const questionEl = document.getElementById('question');
+  const answersEl = document.getElementById('answers');
+  const nextBtn = document.getElementById('next-btn');
+  const resultEl = document.getElementById('result');
+  
+  function showQuestion() {
+    const q = questions[currentQuestionIndex];
+    questionEl.textContent = q.question;
+    answersEl.innerHTML = '';
+    nextBtn.disabled = true;
+  
+    q.answers.forEach(answer => {
+      const btn = document.createElement('button');
+      btn.textContent = answer;
+      btn.onclick = () => selectAnswer(btn, q.correct);
+      answersEl.appendChild(btn);
+    });
+  }
+  
+  function selectAnswer(btn, correct) {
+    Array.from(answersEl.children).forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    nextBtn.disabled = false;
+  
+    if (btn.textContent === correct) {
+      score++;
+    }
+  }
+  
+  nextBtn.onclick = () => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+  
+  function showResult() {
+    questionEl.classList.add('hidden');
+    answersEl.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    resultEl.classList.remove('hidden');
+    resultEl.textContent = `You got ${score} out of ${questions.length} correct!`;
+  }
+  
+  showQuestion();
+  
+  </script>
+</body>
+</html>
